@@ -19,7 +19,7 @@ def preprocess_image(image, watermark_type):
     elif image_w == image_h:
         image_type = "landscape"
     else:
-        image_type = "potrait"
+        image_type = "portrait"
 
     mask_image = Image.open(
         "utils/{}/{}/mask.png".format(watermark_type, image_type))
@@ -39,7 +39,7 @@ def preprocess_image(image, watermark_type):
         print("Image size not supported!!!")
 
     if (preprocessed_mask_image.shape != (0,)):
-        assert image.shape == preprocessed_mask_image
+        assert image.shape == preprocessed_mask_image.shape
         grid = 8
         image = image[:image_h//grid*grid, :image_w//grid*grid, :]
         preprocessed_mask_image = preprocessed_mask_image[:image_h //
