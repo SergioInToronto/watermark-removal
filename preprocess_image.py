@@ -4,7 +4,6 @@ import cv2
 
 
 def preprocess_image(image, watermark_type):
-    image_type: str = ''
     preprocessed_mask_image = np.array([])
     if image.mode != "RGB":
         image = image.convert("RGB")
@@ -14,15 +13,14 @@ def preprocess_image(image, watermark_type):
     aspectRatioImage = image_w / image_h
     print("image size: {}".format(image.shape))
 
-    if image_w > image_h:
-        image_type = "landscape"
-    elif image_w == image_h:
-        image_type = "landscape"
+    if image_w < image_h:
+        orientation = "portrait"
     else:
-        image_type = "portrait"
+        # Square images default to landscape
+        orientation = "landscape"
 
     mask_image = Image.open(
-        "utils/{}/{}/mask.png".format(watermark_type, image_type))
+        "utils/{}/{}/mask.png".format(watermark_type, orientation))
     if mask_image.mode != "RGB":
         mask_image = mask_image.convert("RGB")
     mask_image = np.array(mask_image)
