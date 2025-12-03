@@ -18,6 +18,8 @@ parser.add_argument('--watermark_type', default='istock', type=str,
                     help='The watermark type')
 parser.add_argument('--checkpoint_dir', default='model/', type=str,
                     help='The directory of tensorflow checkpoint.')
+parser.add_argument('--scale', default=1.0, type=float,
+                    help='Resize the image')
 
 #checkpoint_dir = 'model/'
 
@@ -27,13 +29,17 @@ if __name__ == "__main__":
     # ng.get_gpus(1)
     args, unknown = parser.parse_known_args()
 
+    if args.scale > 1.0:
+        raise RuntimeError("Scale must be 1.0 or lower")
+
     model = InpaintCAModel()
     image = Image.open(args.image)
-    input_image = preprocess_image(image, args.watermark_type)
+    input_image = preprocess_image(image, args.watermark_type, args.scale)
     tf.compat.v1.reset_default_graph()
 
     sess_config = tf.compat.v1.ConfigProto()
     sess_config.gpu_options.allow_growth = True
+
     if (input_image.shape != (0,)):
         with tf.compat.v1.Session(config=sess_config) as sess:
             input_image = tf.constant(input_image, dtype=tf.float32)

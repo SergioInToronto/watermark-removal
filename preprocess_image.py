@@ -3,11 +3,14 @@ from PIL import Image
 import cv2
 
 
-def preprocess_image(image, watermark_type):
+def preprocess_image(image, watermark_type, scale=1.0):
     preprocessed_mask_image = np.array([])
     if image.mode != "RGB":
         image = image.convert("RGB")
     image = np.array(image)
+    if scale != 1.0:
+        image = cv2.resize(image, None, fx=scale, fy=scale)
+        print("Scaled by {}".format(scale))
     image_h = image.shape[0]
     image_w = image.shape[1]
     aspectRatioImage = image_w / image_h
@@ -25,6 +28,7 @@ def preprocess_image(image, watermark_type):
         mask_image = mask_image.convert("RGB")
     mask_image = np.array(mask_image)
     print("mask image size: {}".format(mask_image.shape))
+
 
     aspectRatioMaskImage = mask_image.shape[1] / mask_image.shape[0]
     upperBoundAspectRatio = 1.05 * aspectRatioMaskImage
